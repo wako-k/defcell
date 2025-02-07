@@ -26,8 +26,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('pse_file', metavar='FILENAME',
                         help='file name of the PyMOL pse file')
-    parser.add_argument('-s', '--strain', metavar='STRAIN', type=float,
-                        help='specify a strain (%%)')
+    parser.add_argument('-s', '--strain', metavar='COMPONENT',
+                        help='specify a strain component (e.g. exx, eyy, ezz, eyz, ezx, exy)')
+    parser.add_argument('-a', '--amount', metavar='STRAIN', type=float,
+                        help='specify an amount of strain (%%)')
     parser.add_argument('-o', '--output', metavar='FILENAME', default='out.pdb',
                         help='output filename for pdb file (default: %(default)s)')
     args = parser.parse_args()
@@ -35,11 +37,14 @@ def main():
     # file name of the PyMOL pse file
     pse_file = args.pse_file
 
+    # strain component
+    component_strain = args.strain
+
     # strain (%)
-    strain_percent = args.strain
+    amount_strain_percent = args.amount
 
     # ratio of the strain
-    strain = strain_percent/100.0
+    amount_strain = amount_strain_percent/100.0
 
     # file name of the output pdb file
     out_file = args.output
@@ -49,10 +54,9 @@ def main():
 
     # get the names of the molecules
     mol_list = cmd.get_object_list()
-#    print(mol_list)
 
     # deform the unit cell
-    deform_cell(strain, mol_list)
+    deform_cell(component_strain, amount_strain, mol_list)
 
     # move the molecules
     move_molecules(strain, mol_list)
@@ -61,9 +65,13 @@ def main():
     cmd.save(out_file)
 
 ####################################################################################################
-def deform_cell(strain, mol_list):
+def deform_cell(component_strain, amount_strain, mol_list):
     """deform the unit cell"""
 
+    print(component_strain)
+    print(amount_strain)
+
+    sys.exit()
     # get the first molecule
     first_mol = mol_list[0]
 #    print("first_mol:", first_mol)
