@@ -99,6 +99,8 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     new_symmetry = []
 
 #    print("symmetry:", symmetry)
+#    print("component_strain:", component_strain)
+#    print("amount_strain:", amount_strain)
 
     # the unit cell length
     cell_a = symmetry[0]
@@ -116,9 +118,19 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     space_group = symmetry[6]
 #    print("space_group:", space_group)
 
-    # deform the cell length
-    new_a = cell_a + (cell_a * amount_strain)
-#    print("new_a:", new_a)
+    match component_strain:
+        case 'exx':
+#            print("exx")
+            # deform the cell length
+            new_a = cell_a + (cell_a * amount_strain)
+#            print("new_a:", new_a)
+            # no changes
+            new_b = cell_b
+            new_c = cell_c
+            new_alpha = cell_alpha
+            new_beta  = cell_beta
+            new_gamma = cell_gamma
+
 
     new_symmetry.append(new_a)
     new_symmetry.append(cell_b)
