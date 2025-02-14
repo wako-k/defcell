@@ -58,6 +58,10 @@ def main():
     # deform the unit cell
     deform_cell(component_strain, amount_strain, mol_list)
 
+    print(component_strain)
+    print(amount_strain)
+    sys.exit()
+
     # move the molecules
     move_molecules(strain, mol_list)
 
@@ -68,16 +72,35 @@ def main():
 def deform_cell(component_strain, amount_strain, mol_list):
     """deform the unit cell"""
 
-    print(component_strain)
-    print(amount_strain)
-
-    sys.exit()
     # get the first molecule
     first_mol = mol_list[0]
-#    print("first_mol:", first_mol)
 
     # get the unit cell lengths
     symmetry = cmd.get_symmetry(first_mol)
+
+    # calculate the unit cell parameters
+    new_symmetry = calc_cell_parameter(component_strain, amount_strain, symmetry)
+
+    a = new_symmetry[0]
+    b = new_symmetry[1]
+    c = new_symmetry[2]
+    alpha = new_symmetry[3]
+    beta  = new_symmetry[4]
+    gamma = new_symmetry[5]
+    space_group = new_symmetry[6]
+
+    # change the cell size
+    cmd.set_symmetry(first_mol, a, b, c, alpha, beta, gamma, space_group)
+
+    return
+
+
+####################################################################################################
+def calc_cell_parameter(component_strain, amount_strain, symmetry):
+    """calculate the unit cell parameters"""
+
+    new_symmetry = []
+
 #    print("symmetry:", symmetry)
 
     # the unit cell length
@@ -97,17 +120,20 @@ def deform_cell(component_strain, amount_strain, mol_list):
 #    print("space_group:", space_group)
 
     # deform the cell length
-    new_a = cell_a + (cell_a * strain)
+    new_a = cell_a + (cell_a * amount_strain)
 #    print("new_a:", new_a)
 
-    # change the cell size
-    cmd.set_symmetry(first_mol, new_a, cell_b, cell_c, cell_alpha, cell_beta, cell_gamma, space_group)
-
-    # conform
-#    new_symmetry = cmd.get_symmetry(first_mol)
+    new_symmetry.append(new_a)
+    new_symmetry.append(cell_b)
+    new_symmetry.append(cell_c)
+    new_symmetry.append(cell_alpha)
+    new_symmetry.append(cell_beta)
+    new_symmetry.append(cell_gamma)
+    new_symmetry.append(space_group)
 #    print("new_symmetry:", new_symmetry)
 
-    return
+    return new_symmetry
+
 
 ####################################################################################################
 def move_molecules(strain, mol_list):
