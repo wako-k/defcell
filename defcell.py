@@ -8,6 +8,7 @@
 ####################################################################################################
 import sys
 import argparse
+import numpy as np
  
 # Tell PyMOL to launch quiet (-q), without script (-k) and without internal GUI (-i)
 import __main__
@@ -97,6 +98,19 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     """calculate the unit cell parameters"""
 
     new_symmetry = []
+
+
+    # get the lattice constant
+
+    # transform to the lattice vector
+
+    # calculate the vector of the strain
+
+    # calculate the new lattice constant
+
+
+
+
 
 #    print("symmetry:", symmetry)
 #    print("component_strain:", component_strain)
