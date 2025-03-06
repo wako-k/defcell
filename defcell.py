@@ -99,10 +99,60 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 
     new_symmetry = []
 
+    # dummy data
+#    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
 
+    #
     # get the lattice constant
+    #
 
+    print("symmetry:", symmetry)
+    print("component_strain:", component_strain)
+    print("amount_strain:", amount_strain)
+
+    # the unit cell length
+    a = symmetry[0]
+    b = symmetry[1]
+    c = symmetry[2]
+    print("cell lengths:", a, b, c)
+
+    # the unit cell angles
+    alpha = symmetry[3]
+    beta  = symmetry[4]
+    gamma = symmetry[5]
+    print("cell angles:", alpha, beta, gamma)
+
+    # the space group name
+    space_group = symmetry[6]
+    print("space_group:", space_group)
+
+    #
     # transform to the lattice vector
+    #
+
+    # convert to radian
+    alpha_rad, beta_rad, gamma_rad = np.radians([alpha, beta, gamma])
+    print("alpha_rad, beta_rad, gamma_rad:", alpha_rad, beta_rad, gamma_rad)
+
+    # the vector of a1
+    a1 = np.array([a, 0, 0])
+    print("a1:", a1)
+
+    # the vector of a2
+    a2 = np.array([b * np.cos(gamma_rad), b * np.sin(gamma_rad), 0])
+    print("a2:", a2)
+
+    # the vector of a3
+    cx = c * np.cos(beta_rad)
+    cy = c * (np.cos(alpha_rad) - np.cos(beta_rad) * np.cos(gamma_rad)) / np.sin(gamma_rad)
+    cz = np.sqrt(c**2 - cx**2 - cy**2)
+    
+    a3 = np.array([cx, cy, cz])
+    print("a3:", a3)
+
+    lattice_vectors = np.array([a1, a2, a3])
+    print("lattice_vectors:", lattice_vectors)
+
 
     # calculate the vector of the strain
 
@@ -110,27 +160,10 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 
 
 
+    sys.exit()
 
 
-#    print("symmetry:", symmetry)
-#    print("component_strain:", component_strain)
-#    print("amount_strain:", amount_strain)
 
-    # the unit cell length
-    cell_a = symmetry[0]
-    cell_b = symmetry[1]
-    cell_c = symmetry[2]
-#    print("cell lengths:", cell_a, cell_b, cell_c)
-
-    # the unit cell angles
-    cell_alpha = symmetry[3]
-    cell_beta  = symmetry[4]
-    cell_gamma = symmetry[5]
-#    print("cell angles:", cell_alpha, cell_beta, cell_gamma)
-
-    # the space group name
-    space_group = symmetry[6]
-#    print("space_group:", space_group)
 
     match component_strain:
         case 'exx':
