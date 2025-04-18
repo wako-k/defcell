@@ -122,6 +122,8 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     deformed_lattice_vectors = np.dot(deformation_gradient, lattice_vectors)
     print("deformed_lattice_vectors", deformed_lattice_vectors)
 
+    # calculate the lattice constant
+#    calc_lattice_constant(deformed_lattice_vectors)
 
 
     sys.exit()
@@ -151,6 +153,19 @@ def calc_strain_tensor(component_strain, amount_strain):
     match component_strain:
         case 'exx':
             strain_vector = np.array([amount_strain, 0.0, 0.0, 0.0, 0.0, 0.0])
+        case 'eyy':
+            strain_vector = np.array([0.0, amount_strain, 0.0, 0.0, 0.0, 0.0])
+        case 'ezz':
+            strain_vector = np.array([0.0, 0.0, amount_strain, 0.0, 0.0, 0.0])
+        case 'eyz':
+            strain_vector = np.array([0.0, 0.0, 0.0, amount_strain, 0.0, 0.0])
+        case 'ezx':
+            strain_vector = np.array([0.0, 0.0, 0.0, 0.0, amount_strain, 0.0])
+        case 'exy':
+            strain_vector = np.array([0.0, 0.0, 0.0, 0.0, 0.0, amount_strain])
+        case _:
+            print("Error. The component of strain is ", component_strain)
+            sys.exit()
 
     print("strain_vector", strain_vector)
 
