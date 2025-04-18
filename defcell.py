@@ -106,11 +106,11 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     print("component_strain:", component_strain)
     print("amount_strain:", amount_strain)
 
+    # calculate the lattice vectors
     lattice_vectors = calc_lattice_vector(symmetry)
 
-
-
     # calculate the vector of the strain
+    calc_strain_tensor(component_strain, amount_strain)
 
     # calculate the new lattice constant
 
@@ -146,6 +146,14 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 
     return new_symmetry
 
+
+####################################################################################################
+def calc_strain_tensor(component_strain, amount_strain):
+    """calculate the vector of the strain"""
+
+    pass
+
+    return
 
 
 ####################################################################################################
