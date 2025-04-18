@@ -102,13 +102,59 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     # dummy data
 #    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
 
-    #
-    # get the lattice constant
-    #
-
     print("symmetry:", symmetry)
     print("component_strain:", component_strain)
     print("amount_strain:", amount_strain)
+
+    lattice_vectors = calc_lattice_vector(symmetry)
+
+
+
+    # calculate the vector of the strain
+
+    # calculate the new lattice constant
+
+
+
+    sys.exit()
+
+
+
+
+    match component_strain:
+        case 'exx':
+#            print("exx")
+            # deform the cell length
+            new_a = cell_a + (cell_a * amount_strain)
+#            print("new_a:", new_a)
+            # no changes
+            new_b = cell_b
+            new_c = cell_c
+            new_alpha = cell_alpha
+            new_beta  = cell_beta
+            new_gamma = cell_gamma
+
+
+    new_symmetry.append(new_a)
+    new_symmetry.append(cell_b)
+    new_symmetry.append(cell_c)
+    new_symmetry.append(cell_alpha)
+    new_symmetry.append(cell_beta)
+    new_symmetry.append(cell_gamma)
+    new_symmetry.append(space_group)
+#    print("new_symmetry:", new_symmetry)
+
+    return new_symmetry
+
+
+
+####################################################################################################
+def calc_lattice_vector(symmetry):
+    """calclate lattice vectors from lattice constants"""
+
+    #
+    # get the lattice constant
+    #
 
     # the unit cell length
     a = symmetry[0]
@@ -153,42 +199,7 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     lattice_vectors = np.array([a1, a2, a3])
     print("lattice_vectors:", lattice_vectors)
 
-
-    # calculate the vector of the strain
-
-    # calculate the new lattice constant
-
-
-
-    sys.exit()
-
-
-
-
-    match component_strain:
-        case 'exx':
-#            print("exx")
-            # deform the cell length
-            new_a = cell_a + (cell_a * amount_strain)
-#            print("new_a:", new_a)
-            # no changes
-            new_b = cell_b
-            new_c = cell_c
-            new_alpha = cell_alpha
-            new_beta  = cell_beta
-            new_gamma = cell_gamma
-
-
-    new_symmetry.append(new_a)
-    new_symmetry.append(cell_b)
-    new_symmetry.append(cell_c)
-    new_symmetry.append(cell_alpha)
-    new_symmetry.append(cell_beta)
-    new_symmetry.append(cell_gamma)
-    new_symmetry.append(space_group)
-#    print("new_symmetry:", new_symmetry)
-
-    return new_symmetry
+    return lattice_vectors
 
 
 ####################################################################################################
