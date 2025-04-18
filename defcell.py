@@ -100,7 +100,7 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     new_symmetry = []
 
     # dummy data
-#    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
+    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
 
     print("symmetry:", symmetry)
     print("component_strain:", component_strain)
@@ -108,31 +108,25 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 
     # calculate the lattice vectors
     lattice_vectors = calc_lattice_vector(symmetry)
+    print("lattice_vectors", lattice_vectors)
 
     # calculate the vector of the strain
-    calc_strain_tensor(component_strain, amount_strain)
+    strain_tensor = calc_strain_tensor(component_strain, amount_strain)
+    print("strain_tensor", strain_tensor)
 
-    # calculate the new lattice constant
+    # calcuate the deformation gradient tensor (F = I + e)
+    deformation_gradient = np.eye(3) + strain_tensor
+    print("deformation_gradient", deformation_gradient)
+
+    # applay deformation to the lattice vectors
+    deformed_lattice_vectors = np.dot(deformation_gradient, lattice_vectors)
+    print("deformed_lattice_vectors", deformed_lattice_vectors)
 
 
 
     sys.exit()
 
 
-
-
-    match component_strain:
-        case 'exx':
-#            print("exx")
-            # deform the cell length
-            new_a = cell_a + (cell_a * amount_strain)
-#            print("new_a:", new_a)
-            # no changes
-            new_b = cell_b
-            new_c = cell_c
-            new_alpha = cell_alpha
-            new_beta  = cell_beta
-            new_gamma = cell_gamma
 
 
     new_symmetry.append(new_a)
@@ -151,9 +145,24 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 def calc_strain_tensor(component_strain, amount_strain):
     """calculate the vector of the strain"""
 
-    pass
+    # create the strain vector
+    # (exx, eyy, ezz, 2eyz, 2ezx, 2exy)
 
-    return
+    match component_strain:
+        case 'exx':
+            strain_vector = np.array([amount_strain, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+    print("strain_vector", strain_vector)
+
+    # convert to strain tensor
+    strain_tensor = np.array([
+        [strain_vector[0],     strain_vector[5] / 2, strain_vector[4] / 2],
+        [strain_vector[5] / 2, strain_vector[1],     strain_vector[3] / 2],
+        [strain_vector[4] / 2, strain_vector[3] / 2, strain_vector[2]]
+    ])
+    print("strain_tensor", strain_tensor)
+
+    return strain_tensor
 
 
 ####################################################################################################
