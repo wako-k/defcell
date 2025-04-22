@@ -60,7 +60,7 @@ def main():
     deform_cell(component_strain, amount_strain, mol_list)
 
     # move the molecules
-#    move_molecules(component_strain, amount_strain, mol_list)
+    move_molecules(component_strain, amount_strain, mol_list)
 
     # save the file
     cmd.save(out_file)
@@ -261,6 +261,10 @@ def calc_lattice_vector(symmetry):
 ####################################################################################################
 def move_molecules(component_strain, amount_strain, mol_list):
     """move the molecules"""
+
+    print("mol_list", mol_list)
+
+    sys.exit()
 
     # loop for the all molecules
     for mol in mol_list:
