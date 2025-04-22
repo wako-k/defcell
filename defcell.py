@@ -60,7 +60,7 @@ def main():
     deform_cell(component_strain, amount_strain, mol_list)
 
     # move the molecules
-    move_molecules(component_strain, amount_strain, mol_list)
+#    move_molecules(component_strain, amount_strain, mol_list)
 
     # save the file
     cmd.save(out_file)
@@ -97,50 +97,74 @@ def deform_cell(component_strain, amount_strain, mol_list):
 def calc_cell_parameter(component_strain, amount_strain, symmetry):
     """calculate the unit cell parameters"""
 
-    new_symmetry = []
-
     # dummy data
-    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
+#    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
+    space_group = symmetry[6]
+#    print("space_group", space_group)
 
-    print("symmetry:", symmetry)
-    print("component_strain:", component_strain)
-    print("amount_strain:", amount_strain)
+#    print("symmetry:", symmetry)
+#    print("component_strain:", component_strain)
+#    print("amount_strain:", amount_strain)
 
     # calculate the lattice vectors
     lattice_vectors = calc_lattice_vector(symmetry)
-    print("lattice_vectors", lattice_vectors)
+#    print("lattice_vectors", lattice_vectors)
 
-    # calculate the vector of the strain
+    # calculate the strain tensor
     strain_tensor = calc_strain_tensor(component_strain, amount_strain)
-    print("strain_tensor", strain_tensor)
+#    print("strain_tensor", strain_tensor)
 
     # calcuate the deformation gradient tensor (F = I + e)
     deformation_gradient = np.eye(3) + strain_tensor
-    print("deformation_gradient", deformation_gradient)
+#    print("deformation_gradient", deformation_gradient)
 
     # applay deformation to the lattice vectors
     deformed_lattice_vectors = np.dot(deformation_gradient, lattice_vectors)
-    print("deformed_lattice_vectors", deformed_lattice_vectors)
+#    print("deformed_lattice_vectors", deformed_lattice_vectors)
 
     # calculate the lattice constant
-#    calc_lattice_constant(deformed_lattice_vectors)
-
-
-    sys.exit()
-
-
-
-
-    new_symmetry.append(new_a)
-    new_symmetry.append(cell_b)
-    new_symmetry.append(cell_c)
-    new_symmetry.append(cell_alpha)
-    new_symmetry.append(cell_beta)
-    new_symmetry.append(cell_gamma)
-    new_symmetry.append(space_group)
-#    print("new_symmetry:", new_symmetry)
+    new_symmetry = calc_lattice_constant(deformed_lattice_vectors, space_group)
+#    print("new_symmetry", new_symmetry)
 
     return new_symmetry
+
+
+####################################################################################################
+def calc_lattice_constant(lattice_vectors, space_group):
+    """calculate the lattice constant"""
+
+    a1 = lattice_vectors[0]
+    a2 = lattice_vectors[1]
+    a3 = lattice_vectors[2]
+#    print("a1", a1)
+#    print("a2", a2)
+#    print("a3", a3)
+
+    a = np.linalg.norm(a1)
+    b = np.linalg.norm(a2)
+    c = np.linalg.norm(a3)
+#    print("a", a)
+#    print("b", b)
+#    print("c", c)
+
+    cos_a = np.dot(a2, a3) / (b * c)
+    cos_b = np.dot(a3, a1) / (c * a)
+    cos_c = np.dot(a1, a2) / (a * b)
+#    print("cos_a", cos_a)
+#    print("cos_b", cos_b)
+#    print("cos_c", cos_c)
+
+    alpha = np.degrees(np.arccos(cos_a))
+    beta  = np.degrees(np.arccos(cos_b))
+    gamma = np.degrees(np.arccos(cos_c))
+
+#    print("alpha", alpha)
+#    print("beta", beta)
+#    print("gamma", gamma)
+
+    symmetry = [a, b, c, alpha, beta, gamma, space_group]
+
+    return symmetry
 
 
 ####################################################################################################
@@ -167,7 +191,7 @@ def calc_strain_tensor(component_strain, amount_strain):
             print("Error. The component of strain is ", component_strain)
             sys.exit()
 
-    print("strain_vector", strain_vector)
+#    print("strain_vector", strain_vector)
 
     # convert to strain tensor
     strain_tensor = np.array([
@@ -175,7 +199,7 @@ def calc_strain_tensor(component_strain, amount_strain):
         [strain_vector[5] / 2, strain_vector[1],     strain_vector[3] / 2],
         [strain_vector[4] / 2, strain_vector[3] / 2, strain_vector[2]]
     ])
-    print("strain_tensor", strain_tensor)
+#    print("strain_tensor", strain_tensor)
 
     return strain_tensor
 
@@ -192,17 +216,17 @@ def calc_lattice_vector(symmetry):
     a = symmetry[0]
     b = symmetry[1]
     c = symmetry[2]
-    print("cell lengths:", a, b, c)
+#    print("cell lengths:", a, b, c)
 
     # the unit cell angles
     alpha = symmetry[3]
     beta  = symmetry[4]
     gamma = symmetry[5]
-    print("cell angles:", alpha, beta, gamma)
+#    print("cell angles:", alpha, beta, gamma)
 
     # the space group name
     space_group = symmetry[6]
-    print("space_group:", space_group)
+#    print("space_group:", space_group)
 
     #
     # transform to the lattice vector
@@ -210,15 +234,15 @@ def calc_lattice_vector(symmetry):
 
     # convert to radian
     alpha_rad, beta_rad, gamma_rad = np.radians([alpha, beta, gamma])
-    print("alpha_rad, beta_rad, gamma_rad:", alpha_rad, beta_rad, gamma_rad)
+#    print("alpha_rad, beta_rad, gamma_rad:", alpha_rad, beta_rad, gamma_rad)
 
     # the vector of a1
     a1 = np.array([a, 0, 0])
-    print("a1:", a1)
+#    print("a1:", a1)
 
     # the vector of a2
     a2 = np.array([b * np.cos(gamma_rad), b * np.sin(gamma_rad), 0])
-    print("a2:", a2)
+#    print("a2:", a2)
 
     # the vector of a3
     cx = c * np.cos(beta_rad)
@@ -226,10 +250,10 @@ def calc_lattice_vector(symmetry):
     cz = np.sqrt(c**2 - cx**2 - cy**2)
     
     a3 = np.array([cx, cy, cz])
-    print("a3:", a3)
+#    print("a3:", a3)
 
     lattice_vectors = np.array([a1, a2, a3])
-    print("lattice_vectors:", lattice_vectors)
+#    print("lattice_vectors:", lattice_vectors)
 
     return lattice_vectors
 
