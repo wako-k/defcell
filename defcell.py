@@ -245,9 +245,6 @@ def move_molecules(component_strain, amount_strain, mol_list):
 
         # calculate the sift vector
         shift_vector = new_r - r
-
-        # calculate a shift vector for single molecule
-#        shift_vector = calc_shift_vector(component_strain, amount_strain, mol)
         
         # move the molecule
         cmd.translate(shift_vector.tolist(), mol)
@@ -257,27 +254,6 @@ def move_molecules(component_strain, amount_strain, mol_list):
 #        print("new_com:", new_com)
 
     return
-
-
-####################################################################################################
-def calc_shift_vector(component_strain, amount_strain, mol):
-    """calculate a shift vector for single molecule"""
-
-    # get the center of mass
-    com = cmd.centerofmass(mol)
-#    print("com:", com)
-
-    # the x coordinate
-    x = com[0]
-#    print("x:", x)
-
-    # calculate the shift vector
-    shift = amount_strain * x
-#    print("shift:", shift)
-
-    shift_vector = [shift, 0, 0]
-
-    return shift_vector
 
 
 ####################################################################################################
