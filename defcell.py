@@ -262,19 +262,37 @@ def calc_lattice_vector(symmetry):
 def move_molecules(component_strain, amount_strain, mol_list):
     """move the molecules"""
 
-    print("mol_list", mol_list)
+#    print("mol_list", mol_list)
 
-    sys.exit()
+    # calculate the strain tensor
+    strain_tensor = calc_strain_tensor(component_strain, amount_strain)
+#    print("strain_tensor", strain_tensor)
+
+    # calcuate the deformation gradient tensor (F = I + e)
+    deformation_gradient = np.eye(3) + strain_tensor
+#    print("deformation_gradient", deformation_gradient)
 
     # loop for the all molecules
     for mol in mol_list:
 #        print("mol:", mol)
 
+        # get the position vector for the center of mass
+        r = np.array(cmd.centerofmass(mol))
+#        print("r", r)
+
+        # calculate the deformed potition
+        new_r = np.dot(deformation_gradient, r)
+#        print("new_r", new_r)
+
+        # calculate the sift vector
+        shift_vector = new_r - r
+#        print("shift_vector", shift_vector)
+
         # calculate a shift vector for single molecule
-        shift_vector = calc_shift_vector(component_strain, amount_strain, mol)
+#        shift_vector = calc_shift_vector(component_strain, amount_strain, mol)
         
         # move the molecule
-        cmd.translate(shift_vector, mol)
+        cmd.translate(shift_vector.tolist(), mol)
 
         # conform
 #        new_com = cmd.centerofmass(mol)
