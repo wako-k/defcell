@@ -99,19 +99,24 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 
     # dummy data
 #    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
+    print("symmetry", symmetry)
+
     space_group = symmetry[6]
 
     # calculate the lattice vectors
     lattice_vectors = calc_lattice_vector(symmetry)
+    print("lattice_vectors", lattice_vectors)
 
     # calculate the strain tensor
     strain_tensor = calc_strain_tensor(component_strain, amount_strain)
 
     # calcuate the deformation gradient tensor (F = I + e)
     deformation_gradient = np.eye(3) + strain_tensor
+    print("deformation_gradient", deformation_gradient)
 
     # applay deformation to the lattice vectors
     deformed_lattice_vectors = np.dot(deformation_gradient, lattice_vectors)
+    print("deformed_lattice_vectors", deformed_lattice_vectors)
 
     # calculate the lattice constant
     new_symmetry = calc_lattice_constant(deformed_lattice_vectors, space_group)
@@ -123,9 +128,9 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
 def calc_lattice_constant(lattice_vectors, space_group):
     """calculate the lattice constant"""
 
-    a1 = lattice_vectors[0]
-    a2 = lattice_vectors[1]
-    a3 = lattice_vectors[2]
+    a1 = lattice_vectors[:, 0]
+    a2 = lattice_vectors[:, 1]
+    a3 = lattice_vectors[:, 2]
 
     a = np.linalg.norm(a1)
     b = np.linalg.norm(a2)
@@ -219,7 +224,8 @@ def calc_lattice_vector(symmetry):
     
     a3 = np.array([cx, cy, cz])
 
-    lattice_vectors = np.array([a1, a2, a3])
+    # create the matrix as a column vector
+    lattice_vectors = np.column_stack((a1, a2, a3))
 
     return lattice_vectors
 
