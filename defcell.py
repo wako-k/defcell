@@ -76,22 +76,6 @@ def deform_cell(component_strain, amount_strain, mol_list):
     # get the lattice constants
     lattice_constants = cmd.get_symmetry(first_mol)
 
-    # calculate the unit cell parameters
-    deformed_lattice_constants = calc_cell_parameter(component_strain, amount_strain, lattice_constants)
-
-    # deformed lattice constants
-    a, b, c, alpha, beta, gamma, space_group = deformed_lattice_constants
-
-    # change the cell size
-    cmd.set_symmetry(first_mol, a, b, c, alpha, beta, gamma, space_group)
-
-    return
-
-
-####################################################################################################
-def calc_cell_parameter(component_strain, amount_strain, lattice_constants):
-    """calculate the unit cell parameters"""
-
     # dummy data
 #    lattice_constants = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
 #    print("lattice_constants", lattice_constants)
@@ -117,7 +101,13 @@ def calc_cell_parameter(component_strain, amount_strain, lattice_constants):
     # calculate the deformed lattice constant
     deformed_lattice_constants = convert_lattice_constant(deformed_lattice_vectors, space_group)
 
-    return deformed_lattice_constants
+    # deformed lattice constants
+    a, b, c, alpha, beta, gamma, space_group = deformed_lattice_constants
+
+    # change the cell size
+    cmd.set_symmetry(first_mol, a, b, c, alpha, beta, gamma, space_group)
+
+    return
 
 
 ####################################################################################################
