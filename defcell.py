@@ -99,7 +99,7 @@ def calc_cell_parameter(component_strain, amount_strain, lattice_constants):
     space_group = lattice_constants[6]
 
     # calculate the lattice vectors
-    lattice_vectors = calc_lattice_vector(lattice_constants)
+    lattice_vectors = convert_lattice_vector(lattice_constants)
 #    print("lattice_vectors", lattice_vectors)
 
     # calculate the strain tensor
@@ -115,13 +115,13 @@ def calc_cell_parameter(component_strain, amount_strain, lattice_constants):
 #    print("deformed_lattice_vectors", deformed_lattice_vectors)
 
     # calculate the deformed lattice constant
-    deformed_lattice_constants = calc_lattice_constant(deformed_lattice_vectors, space_group)
+    deformed_lattice_constants = convert_lattice_constant(deformed_lattice_vectors, space_group)
 
     return deformed_lattice_constants
 
 
 ####################################################################################################
-def calc_lattice_constant(lattice_vectors, space_group):
+def convert_lattice_constant(lattice_vectors, space_group):
     """calculate the lattice constant"""
 
     a1 = lattice_vectors[:, 0]
@@ -181,7 +181,7 @@ def calc_strain_tensor(component_strain, amount_strain):
 
 
 ####################################################################################################
-def calc_lattice_vector(lattice_constants):
+def convert_lattice_vector(lattice_constants):
     """calclate lattice vectors from lattice constants"""
 
     #
