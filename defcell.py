@@ -73,19 +73,14 @@ def deform_cell(component_strain, amount_strain, mol_list):
     # get the first molecule
     first_mol = mol_list[0]
 
-    # get the unit cell lengths
-    symmetry = cmd.get_symmetry(first_mol)
+    # get the lattice constants
+    lattice_constants = cmd.get_symmetry(first_mol)
 
     # calculate the unit cell parameters
-    new_symmetry = calc_cell_parameter(component_strain, amount_strain, symmetry)
+    deformed_lattice_constants = calc_cell_parameter(component_strain, amount_strain, lattice_constants)
 
-    a = new_symmetry[0]
-    b = new_symmetry[1]
-    c = new_symmetry[2]
-    alpha = new_symmetry[3]
-    beta  = new_symmetry[4]
-    gamma = new_symmetry[5]
-    space_group = new_symmetry[6]
+    # deformed lattice constants
+    a, b, c, alpha, beta, gamma, space_group = deformed_lattice_constants
 
     # change the cell size
     cmd.set_symmetry(first_mol, a, b, c, alpha, beta, gamma, space_group)
@@ -94,17 +89,17 @@ def deform_cell(component_strain, amount_strain, mol_list):
 
 
 ####################################################################################################
-def calc_cell_parameter(component_strain, amount_strain, symmetry):
+def calc_cell_parameter(component_strain, amount_strain, lattice_constants):
     """calculate the unit cell parameters"""
 
     # dummy data
-#    symmetry = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
-#    print("symmetry", symmetry)
+#    lattice_constants = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
+#    print("lattice_constants", lattice_constants)
 
-    space_group = symmetry[6]
+    space_group = lattice_constants[6]
 
     # calculate the lattice vectors
-    lattice_vectors = calc_lattice_vector(symmetry)
+    lattice_vectors = calc_lattice_vector(lattice_constants)
 #    print("lattice_vectors", lattice_vectors)
 
     # calculate the strain tensor
@@ -119,11 +114,10 @@ def calc_cell_parameter(component_strain, amount_strain, symmetry):
     deformed_lattice_vectors = np.dot(deformation_gradient, lattice_vectors)
 #    print("deformed_lattice_vectors", deformed_lattice_vectors)
 
-    # calculate the lattice constant
-    new_symmetry = calc_lattice_constant(deformed_lattice_vectors, space_group)
-#    print("new_symmetry", new_symmetry)
+    # calculate the deformed lattice constant
+    deformed_lattice_constants = calc_lattice_constant(deformed_lattice_vectors, space_group)
 
-    return new_symmetry
+    return deformed_lattice_constants
 
 
 ####################################################################################################
@@ -146,9 +140,9 @@ def calc_lattice_constant(lattice_vectors, space_group):
     beta  = np.degrees(np.arccos(cos_b))
     gamma = np.degrees(np.arccos(cos_c))
 
-    symmetry = [a, b, c, alpha, beta, gamma, space_group]
+    lattice_constants = [a, b, c, alpha, beta, gamma, space_group]
 
-    return symmetry
+    return lattice_constants
 
 
 ####################################################################################################
@@ -187,7 +181,7 @@ def calc_strain_tensor(component_strain, amount_strain):
 
 
 ####################################################################################################
-def calc_lattice_vector(symmetry):
+def calc_lattice_vector(lattice_constants):
     """calclate lattice vectors from lattice constants"""
 
     #
@@ -195,17 +189,17 @@ def calc_lattice_vector(symmetry):
     #
 
     # the unit cell length
-    a = symmetry[0]
-    b = symmetry[1]
-    c = symmetry[2]
+    a = lattice_constants[0]
+    b = lattice_constants[1]
+    c = lattice_constants[2]
 
     # the unit cell angles
-    alpha = symmetry[3]
-    beta  = symmetry[4]
-    gamma = symmetry[5]
+    alpha = lattice_constants[3]
+    beta  = lattice_constants[4]
+    gamma = lattice_constants[5]
 
     # the space group name
-    space_group = symmetry[6]
+    space_group = lattice_constants[6]
 
     #
     # transform to the lattice vector
