@@ -28,12 +28,16 @@ def main():
     parser.add_argument('pse_file', metavar='FILENAME',
                         help='file name of the PyMOL pse file')
     parser.add_argument('-s', '--strain', metavar='COMPONENT',
-                        help='specify a strain component (e.g. exx, eyy, ezz, gyz, gzx, gxy)')
+                        help='specify a strain component (e.g. exx, eyy, ezz, gyz, gxz, gxy)')
     parser.add_argument('-a', '--amount', metavar='STRAIN', type=float,
                         help='specify an amount of strain (%%)')
     parser.add_argument('-o', '--output', metavar='FILENAME', default='out.pdb',
                         help='output filename for pdb file (default: %(default)s)')
     args = parser.parse_args()
+
+    #
+    # get the input parameters
+    #
 
     # file name of the PyMOL pse file
     pse_file = args.pse_file
@@ -56,18 +60,32 @@ def main():
     # get the names of the molecules
     mol_list = cmd.get_object_list()
 
+    #
+    # deformation gradient tensor
+    #
+
+    # calculate the strain tensor
+    strain_tensor = calc_strain_tensor(component_strain, amount_strain)
+
+    # calcuate the deformation gradient tensor (F = I + e)
+    deformation_gradient = np.eye(3) + strain_tensor
+
+    #
+    # deformation
+    #
+
     # deform the unit cell
-    deform_cell(component_strain, amount_strain, mol_list)
+    deform_cell(mol_list, deformation_gradient)
 
     # move the molecules
-    move_molecules(component_strain, amount_strain, mol_list)
+    move_molecules(mol_list, deformation_gradient)
 
     # save the file
     cmd.save(out_file)
 
 
 ####################################################################################################
-def deform_cell(component_strain, amount_strain, mol_list):
+def deform_cell(mol_list, deformation_gradient):
     """deform the unit cell"""
 
     # get the first molecule
@@ -75,28 +93,13 @@ def deform_cell(component_strain, amount_strain, mol_list):
 
     # get the lattice constants
     lattice_constants = cmd.get_symmetry(first_mol)
-
-    # dummy data
-#    lattice_constants = [1.0, 1.0, 1.0, 90, 90, 90, 'foo']
-#    print("lattice_constants", lattice_constants)
-
     space_group = lattice_constants[6]
 
     # calculate the lattice vectors
     lattice_vectors = convert_lattice_vector(lattice_constants)
-#    print("lattice_vectors", lattice_vectors)
-
-    # calculate the strain tensor
-    strain_tensor = calc_strain_tensor(component_strain, amount_strain)
-#    print("strain_tensor", strain_tensor)
-
-    # calcuate the deformation gradient tensor (F = I + e)
-    deformation_gradient = np.eye(3) + strain_tensor
-#    print("deformation_gradient", deformation_gradient)
 
     # applay deformation to the lattice vectors
     deformed_lattice_vectors = np.dot(deformation_gradient, lattice_vectors)
-#    print("deformed_lattice_vectors", deformed_lattice_vectors)
 
     # calculate the deformed lattice constant
     deformed_lattice_constants = convert_lattice_constant(deformed_lattice_vectors, space_group)
@@ -218,14 +221,8 @@ def convert_lattice_vector(lattice_constants):
 
 
 ####################################################################################################
-def move_molecules(component_strain, amount_strain, mol_list):
+def move_molecules(mol_list, deformation_gradient):
     """move the molecules"""
-
-    # calculate the strain tensor
-    strain_tensor = calc_strain_tensor(component_strain, amount_strain)
-
-    # calcuate the deformation gradient tensor (F = I + e)
-    deformation_gradient = np.eye(3) + strain_tensor
 
     # loop for the all molecules
     for mol in mol_list:
