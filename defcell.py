@@ -28,7 +28,7 @@ def main():
     parser.add_argument('pse_file', metavar='FILENAME',
                         help='file name of the PyMOL pse file')
     parser.add_argument('-s', '--strain', metavar='COMPONENT',
-                        help='specify a strain component (e.g. exx, eyy, ezz, gyz, gzx, gxy)')
+                        help='specify a strain component (e.g. exx, eyy, ezz, gyz, gxz, gxy)')
     parser.add_argument('-a', '--amount', metavar='STRAIN', type=float,
                         help='specify an amount of strain (%%)')
     parser.add_argument('-o', '--output', metavar='FILENAME', default='out.pdb',
