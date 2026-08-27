@@ -174,6 +174,24 @@ def calc_strain_tensor(component_strain, amount_strain):
 
 
 ####################################################################################################
+def calc_simple_shear_deformation_gradient(strain_vector):
+    """build the deformation gradient tensor for simple shear
+
+    strain_vector: (exx, eyy, ezz, gyz, gzx, gxy)
+    """
+
+    exx, eyy, ezz, gyz, gzx, gxy = strain_vector
+
+    deformation_gradient = np.array([
+        [1.0 + exx, gxy,       gzx],
+        [0.0,       1.0 + eyy, gyz],
+        [0.0,       0.0,       1.0 + ezz],
+    ])
+
+    return deformation_gradient
+
+
+####################################################################################################
 def convert_lattice_vector(lattice_constants):
     """calclate lattice vectors from lattice constants"""
 
