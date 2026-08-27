@@ -144,7 +144,7 @@ def calc_strain_tensor(component_strain, amount_strain):
 
     # create the strain vector
     # (exx, eyy, ezz, gyz, gzx, gxy)
-    # eyz = gyz/2, exz = gzx/2, exy = gxy/2
+    # eyz = gyz/2, ezx = gzx/2, exy = gxy/2
 
     match component_strain:
         case 'exx':
