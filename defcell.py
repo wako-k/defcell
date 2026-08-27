@@ -28,7 +28,7 @@ def main():
     parser.add_argument('pse_file', metavar='FILENAME',
                         help='file name of the PyMOL pse file')
     parser.add_argument('-s', '--strain', metavar='COMPONENT',
-                        help='specify a strain component (e.g. exx, eyy, ezz, gyz, gxz, gxy)')
+                        help='specify a strain component (e.g. exx, eyy, ezz, gyz, gzx, gxy)')
     parser.add_argument('-a', '--amount', metavar='STRAIN', type=float,
                         help='specify an amount of strain (%%)')
     parser.add_argument('-o', '--output', metavar='FILENAME', default='out.pdb',
@@ -143,7 +143,7 @@ def calc_strain_tensor(component_strain, amount_strain):
     """calculate the vector of the strain"""
 
     # create the strain vector
-    # (exx, eyy, ezz, gyz, gxz, gxy)
+    # (exx, eyy, ezz, gyz, gzx, gxy)
     # eyz = gyz/2, exz = gzx/2, exy = gxy/2
 
     match component_strain:
@@ -155,7 +155,7 @@ def calc_strain_tensor(component_strain, amount_strain):
             strain_vector = np.array([0.0, 0.0, amount_strain, 0.0, 0.0, 0.0])
         case 'gyz':
             strain_vector = np.array([0.0, 0.0, 0.0, amount_strain, 0.0, 0.0])
-        case 'gxz':
+        case 'gzx' | 'gxz':
             strain_vector = np.array([0.0, 0.0, 0.0, 0.0, amount_strain, 0.0])
         case 'gxy':
             strain_vector = np.array([0.0, 0.0, 0.0, 0.0, 0.0, amount_strain])
