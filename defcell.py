@@ -64,11 +64,11 @@ def main():
     # deformation gradient tensor
     #
 
-    # calculate the strain tensor
-    strain_tensor = calc_strain_tensor(component_strain, amount_strain)
+    # calculate the strain vector
+    strain_vector = calc_strain_vector(component_strain, amount_strain)
 
-    # calcuate the deformation gradient tensor (F = I + e)
-    deformation_gradient = np.eye(3) + strain_tensor
+    # calculate the deformation gradient tensor for simple shear
+    deformation_gradient = calc_simple_shear_deformation_gradient(strain_vector)
 
     #
     # deformation
@@ -139,8 +139,8 @@ def convert_lattice_constant(lattice_vectors, space_group):
 
 
 ####################################################################################################
-def calc_strain_tensor(component_strain, amount_strain):
-    """calculate the vector of the strain"""
+def calc_strain_vector(component_strain, amount_strain):
+    """calculate the strain vector"""
 
     # create the strain vector
     # (exx, eyy, ezz, gyz, gzx, gxy)
@@ -162,6 +162,15 @@ def calc_strain_tensor(component_strain, amount_strain):
         case _:
             print("Error. The component of strain is ", component_strain)
             sys.exit()
+
+    return strain_vector
+
+
+####################################################################################################
+def calc_strain_tensor(component_strain, amount_strain):
+    """calculate the infinitesimal strain tensor"""
+
+    strain_vector = calc_strain_vector(component_strain, amount_strain)
 
     # convert to strain tensor
     strain_tensor = np.array([
@@ -268,4 +277,3 @@ def move_molecules(mol_list, deformation_gradient):
 if __name__ == "__main__":
     # execute only if run as a script
     main()
-
