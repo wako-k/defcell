@@ -31,6 +31,8 @@ def main():
                         help='specify a strain component (e.g. exx, eyy, ezz, gyz, gzx, gxy)')
     parser.add_argument('-a', '--amount', metavar='STRAIN', type=float,
                         help='specify an amount of strain (%%)')
+    parser.add_argument('--shear-mode', choices=('pure', 'simple'), default='pure',
+                        help='specify shear deformation mode (default: %(default)s)')
     parser.add_argument('-o', '--output', metavar='FILENAME', default='out.pdb',
                         help='output filename for pdb file (default: %(default)s)')
     args = parser.parse_args()
@@ -67,8 +69,13 @@ def main():
     # calculate the strain vector
     strain_vector = calc_strain_vector(component_strain, amount_strain)
 
-    # calculate the deformation gradient tensor for simple shear
-    deformation_gradient = calc_simple_shear_deformation_gradient(strain_vector)
+    # calculate the deformation gradient tensor
+    if args.shear_mode == 'pure':
+        deformation_gradient = calc_pure_shear_deformation_gradient(strain_vector)
+    elif args.shear_mode == 'simple':
+        deformation_gradient = calc_simple_shear_deformation_gradient(strain_vector)
+    else:
+        parser.error(f"unknown shear mode: {args.shear_mode}")
 
     #
     # deformation
@@ -172,6 +179,13 @@ def calc_strain_tensor(component_strain, amount_strain):
 
     strain_vector = calc_strain_vector(component_strain, amount_strain)
 
+    return calc_pure_shear_deformation_gradient(strain_vector) - np.eye(3)
+
+
+####################################################################################################
+def calc_pure_shear_deformation_gradient(strain_vector):
+    """build the deformation gradient tensor for pure shear"""
+
     # convert to strain tensor
     strain_tensor = np.array([
         [strain_vector[0],     strain_vector[5] / 2, strain_vector[4] / 2],
@@ -179,7 +193,7 @@ def calc_strain_tensor(component_strain, amount_strain):
         [strain_vector[4] / 2, strain_vector[3] / 2, strain_vector[2]]
     ])
 
-    return strain_tensor
+    return np.eye(3) + strain_tensor
 
 
 ####################################################################################################
